@@ -1,0 +1,120 @@
+﻿<Window x:Class="FileStorageExportTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileStorageExportTool"
+        xmlns:extToolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        mc:Ignorable="d"
+        Title="Export tool" Height="600" Width="800">
+   
+    <Window.DataContext>
+        <local:MainViewModel x:Name="ViewModel" />
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Select channels to export" Margin="5">
+            <DockPanel>
+                <CheckBox DockPanel.Dock="Top" Margin="5" IsEnabled="{Binding IsChannelsListEnabled.Value}"
+                          Command="{Binding SelectAllCommand}" CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}">Select / Unselect all</CheckBox>
+
+                <ListBox Margin="5" ItemsSource="{Binding Channels}" IsEnabled="{Binding IsChannelsListEnabled.Value}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Header="Select license path" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Margin="5" VerticalAlignment="Center" Text="License path:"/>
+                <TextBlock Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="{Binding LicensePath}"/>
+                <Button Grid.Column="2" Width="60" Height="20" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                        Command="{Binding BrowseLicenseCommand}" IsEnabled="{Binding IsBrowseLicenseEnabled.Value}">Browse</Button>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" Header="Select material and destination path" Margin="5">
+            <Grid>                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="5" VerticalAlignment="Center" Text="Source path:"/>
+                <TextBlock Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="{Binding SelectedPath}"/>
+                <Button Grid.Column="2" Width="60" Height="20" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                        Command="{Binding BrowseSourceCommand}" IsEnabled="{Binding IsBrowseSourcePathEnabled.Value}">Browse</Button>
+
+                <TextBlock Grid.Row="1" Margin="5" VerticalAlignment="Center" Text="Destination path:"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="{Binding DestinationPath}"/>
+                <Button Grid.Row="1" Grid.Column="2" Width="60" Height="20" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                        Command="{Binding BrowseDestinationCommand}" IsEnabled="{Binding IsBrowseDestinationPathEnabled.Value}">Browse</Button>
+            </Grid>
+        </GroupBox>
+        
+        <GroupBox Grid.Row="3" Header="Select begin and end date and time" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Margin="5" VerticalAlignment="Center">Export begin</TextBlock>
+
+                <extToolkit:DateTimePicker x:Name="_startDateTimePicker" Grid.Column="1" Margin="5,0,5,0"
+                                           Format="Custom" FormatString="dd/MM/yyyy HH:mm:ss" TimePickerVisibility="Collapsed" ShowButtonSpinner="False"
+                                           VerticalAlignment="Center" TextAlignment="Right" UpdateValueOnEnterKey="True" Value="{Binding Begin.Value}" IsEnabled="{Binding IsTimePeriodEnabled.Value}"/>
+
+                <TextBlock DockPanel.Dock="Right" Margin="5,0,5,0" Grid.Column="2" VerticalAlignment="Center">Export end</TextBlock>
+                
+                <extToolkit:DateTimePicker x:Name="_endDateTimePicker" Grid.Column="3" Margin="5"
+                                           Format="Custom" FormatString="dd/MM/yyyy HH:mm:ss" TimePickerVisibility="Collapsed" ShowButtonSpinner="False"
+                                           VerticalAlignment="Center" TextAlignment="Right" UpdateValueOnEnterKey="True" Value="{Binding End.Value}" IsEnabled="{Binding IsTimePeriodEnabled.Value}" />
+
+                <Button Grid.Column="4" Width="60" Height="20" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                        Command="{Binding ExportCommand}" Content="{Binding ExportButton.Value}"
+                        IsEnabled="{Binding IsExportButtonEnabled.Value}"/>
+
+            </Grid>
+        </GroupBox>
+
+        <ProgressBar Grid.Row="4" Minimum="0" Margin="5,0,5,0" Maximum="100" Height="20" Value="{Binding Progress.Value}" HorizontalAlignment="Stretch"  />
+
+        <StatusBar Grid.Row="5">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Error.Value}" Foreground="Red" Margin="5,0,5,0" />
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
+</Window>
